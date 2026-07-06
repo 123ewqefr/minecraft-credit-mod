@@ -1,16 +1,15 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://maven.minecraftforge.net/snapshot' }
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
     }
 }
+
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
 
 version = '1.0.0'
 group = 'com.creditmod'
@@ -18,7 +17,6 @@ archivesBaseName = 'creditmod-1.16.5'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
     mappings channel: 'official', version: '1.16.5'
 
@@ -28,35 +26,23 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             mods {
-                creditmod {
-                    source sourceSets.main
-                }
+                creditmod { source sourceSets.main }
             }
         }
-
         server {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             mods {
-                creditmod {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', 'creditmod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-            mods {
-                creditmod {
-                    source sourceSets.main
-                }
+                creditmod { source sourceSets.main }
             }
         }
     }
+}
+
+repositories {
+    maven { url = 'https://maven.minecraftforge.net' }
+    mavenCentral()
 }
 
 dependencies {
@@ -66,28 +52,15 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "creditmod",
-                "Specification-Vendor"    : "creditmod",
-                "Specification-Version"   : "1",
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : "${version}",
-                "Implementation-Vendor"   : "creditmod",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Specification-Title"     : "creditmod",
+            "Specification-Vendor"    : "creditmod",
+            "Specification-Version"   : "1",
+            "Implementation-Title"    : project.name,
+            "Implementation-Version"  : "${version}",
+            "Implementation-Vendor"   : "creditmod",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
 
 jar.finalizedBy('reobfJar')
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
