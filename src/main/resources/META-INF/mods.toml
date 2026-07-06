@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="MIT"
+
+[[dependencies.creditmod]]
+    modId="forge"
+    mandatory=true
+    versionRange="[36.1.2,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.creditmod]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.5,1.17)"
+    ordering="NONE"
+    side="BOTH"
+
+[[mods]]
+    modId="creditmod"
+    version="${file.jarVersion}"
+    displayName="Credit Agency Mod"
+    description='''
+    Полноценная система кредитования для Minecraft 1.16.5.
+    Возьмите кредит в Кредитном агентстве, платите проценты,
+    следите за кредитной историей и остерегайтесь коллекторов!
+    '''
+    logoFile="creditmod.png"
+    authors="CreditMod Team"
+    [[mods.dependencies]]
+        modId="forge"
+        mandatory=true
+        versionRange="[36.1.2,)"

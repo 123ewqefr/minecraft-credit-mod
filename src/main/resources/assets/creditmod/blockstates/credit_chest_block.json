@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "creditmod:block/credit_chest_block" }
+  }
+}
