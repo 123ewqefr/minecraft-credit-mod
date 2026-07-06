@@ -26,17 +26,6 @@ jobs:
         with:
           gradle-version: '7.3'
 
-      - name: Cache Gradle and ForgeGradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            ~/.gradle/forge
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Build mod JAR
         run: gradle build --no-daemon --stacktrace
         env:
