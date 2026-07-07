@@ -28,7 +28,9 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
-public class CreditAgencyEntity extends MobEntity {
+import net.minecraft.entity.CreatureEntity;
+// ...
+public class CreditAgencyEntity extends CreatureEntity {
 
     private static final ITextComponent DISPLAY_NAME = new StringTextComponent("Кредитное агентство")
             .withStyle(Style.EMPTY.withColor(TextFormatting.GOLD).withBold(true));
