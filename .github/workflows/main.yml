@@ -21,13 +21,13 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
 
-      - name: Setup Gradle 7.3
+      - name: Setup Gradle 6.8.1
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: '7.3'
+          gradle-version: '6.8.1'
 
       - name: Generate Gradle wrapper
-        run: gradle wrapper --gradle-version=7.3
+        run: gradle wrapper --gradle-version=6.8.1
 
       - name: Cache Forge/Gradle files
         uses: actions/cache@v4
@@ -35,9 +35,9 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-forge-fg5-${{ hashFiles('**/*.gradle*') }}
+          key: ${{ runner.os }}-forge-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
-            ${{ runner.os }}-forge-fg5-
+            ${{ runner.os }}-forge-
 
       - name: Build mod JAR
         run: ./gradlew build --no-daemon --stacktrace
