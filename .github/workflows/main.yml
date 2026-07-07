@@ -29,17 +29,25 @@ jobs:
       - name: Generate Gradle wrapper
         run: gradle wrapper --gradle-version=6.8.1
 
+      - name: Pre-create ForgeGradle MCP cache directories
+        # ForgeGradle 4.x does not create parent directories before writing the
+        # obf_to_srg.tsrg file, causing a NoSuchFileException on a clean runner.
+        run: |
+          mkdir -p ~/.gradle/caches/forge_gradle/mcp_repo/de/oceanlabs/mcp/mcp_config/1.16.5
+          mkdir -p ~/.gradle/caches/forge_gradle/bundeled_repo/net/minecraftforge/forge
+
       - name: Cache Forge/Gradle files
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-forge-${{ hashFiles('**/*.gradle*') }}
+          key: ${{ runner.os }}-forge-fg4-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
-            ${{ runner.os }}-forge-
+            ${{ runner.os }}-forge-fg4-
 
       - name: Build mod JAR
+        working-directory: minecraft-credit-mod
         run: ./gradlew build --no-daemon --stacktrace
         env:
           JAVA_TOOL_OPTIONS: "-Xmx3g"
@@ -48,6 +56,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: creditmod-jar
-          path: build/libs/creditmod-1.16.5-*.jar
+          path: minecraft-credit-mod/build/libs/creditmod-1.16.5-*.jar
           if-no-files-found: error
           retention-days: 30
