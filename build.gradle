@@ -1,66 +1,53 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://maven.minecraftforge.net/snapshot' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
-    }
-}
+name: Build Minecraft Mod JAR
 
-apply plugin: 'net.minecraftforge.gradle'
+"on":
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 
-version = '1.0.0'
-group = 'com.creditmod'
-archivesBaseName = 'creditmod-1.16.5'
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-minecraft {
-    mappings channel: 'snapshot', version: '20210309-1.16.5'
+      - name: Setup Java 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
 
-    runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            mods {
-                creditmod { source sourceSets.main }
-            }
-        }
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            mods {
-                creditmod { source sourceSets.main }
-            }
-        }
-    }
-}
+      - name: Setup Gradle 6.8.3
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '6.8.3'
 
-repositories {
-    maven { url = 'https://maven.minecraftforge.net' }
-    mavenCentral()
-}
+      - name: Generate Gradle wrapper
+        run: gradle wrapper --gradle-version=6.8.3
 
-dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.1.2'
-}
+      - name: Cache Forge/Gradle files
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-forge-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-forge-
 
-jar {
-    manifest {
-        attributes([
-            "Specification-Title"     : "creditmod",
-            "Specification-Vendor"    : "creditmod",
-            "Specification-Version"   : "1",
-            "Implementation-Title"    : project.name,
-            "Implementation-Version"  : "${version}",
-            "Implementation-Vendor"   : "creditmod",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
-}
+      - name: Build mod JAR
+        run: ./gradlew build --no-daemon --stacktrace
+        env:
+          JAVA_TOOL_OPTIONS: "-Xmx3g"
 
-jar.finalizedBy('reobfJar')
+      - name: Upload mod JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: creditmod-jar
+          path: build/libs/creditmod-1.16.5-*.jar
+          if-no-files-found: error
+          retention-days: 30
