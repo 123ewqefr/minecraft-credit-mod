@@ -1,5 +1,6 @@
 package com.creditmod.event;
 
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import com.creditmod.block.CreditChestTileEntity;
 import com.creditmod.command.CreditCommand;
 import com.creditmod.data.CreditWorldData;
@@ -176,7 +177,7 @@ public class CreditEventHandler {
     public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
 
-        event.getServer().getAllLevels().forEach(world -> {
+        ServerLifecycleHooks.getCurrentServer().getAllLevels().forEach(world -> {
             long gameTick = world.getGameTime();
             String dimKey = world.dimension().location().toString();
             long last = lastCheckTick.getOrDefault(dimKey, 0L);
